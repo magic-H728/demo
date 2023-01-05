@@ -1,185 +1,175 @@
 <template>
-  <div class="container">
-    <el-form
-      :model="form"
-      label-width="120px"
-    >
-      <el-form-item label="学期">
-        <el-select
-          v-model="form.xnxq01id"
-          placeholder="请选择要查询的学期"
+    <div class="container">
+      <el-form
+        ref="ruleFormRef"
+        :model="ruleForm"
+        status-icon
+        :rules="rules"
+        label-width="120px"
+        class="demo-ruleForm"
+      >
+        <el-form-item
+          label="学号"
+          prop="school_id"
         >
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-            @click="Update(item.value)"
+          <el-input
+            v-model="ruleForm.school_id"
+            type="text"
+            autocomplete="off"
           />
-
-        </el-select>
-      </el-form-item>
-      <el-form-item label="开始日期">
-        <el-col :span="11">
-          <el-date-picker
-            v-model="form.start_date"
-            type="date"
-            value-format="YYYYMMDD"
-            placeholder="请选择开始日期"
-            style="width: 250%"
-            @update:model-value="Update"
-          />
-        </el-col>
-      </el-form-item>
-
-      <el-form-item>
-        <el-button
-          type="primary"
-          @click="onSubmit"
-        >确定</el-button>
-      </el-form-item>
-    </el-form>
-  </div>
-</template>
-    
-  <script lang="ts" >
-import { ElNotification } from "element-plus";
-import "element-plus/theme-chalk/el-notification.css";
-import axios from "axios";
-import { ref } from "vue";
-import { reactive } from "vue";
-// 创建form对象
-const form = reactive({
-  school_id: "",
-  xnxq01id: "",
-  start_date: "",
-});
-
-// 类型“string | null”的参数不能赋给类型“string”的参数。
-// 类型“null”的参数不能赋给类型“string”的参数。
-// 解决办法：使用类型断言
-const user = JSON.parse(sessionStorage.getItem("user") as string);
-// const user = JSON.parse(sessionStorage.getItem("user"));
-
-export default {
-  created: function () {
-    //去除options中的第一个元素
-    this.options.shift();
-    // const user = JSON.parse(sessionStorage.getItem("user"));
-    //将user中的school_id属性赋值给form中的school_id属性
-    form.school_id = user.school_id;
-
-    //获取user中的第一个属性
-    let firstKey = Object.keys(user)[0];
-    //将user中的第一个key赋值给form中的xnxq01id属性
-    // this.form.xnxq01id = firstKey;
-    form.xnxq01id = firstKey;
-    //将user中的第一个value赋值给form中的start_date属性
-    // this.form.start_date = user[firstKey];
-    form.start_date = user[firstKey];
-
-    //删除user中的school_id属性
-    delete user.school_id;
-    //将user中的每个属性赋值给options
-    for (let key in user) {
-      this.options.push({
-        value: key,
-        label: key,
-      });
-    }
-    console.log("form:", form);
-    // this.userInfo = user;
-    // console.log(this.userInfo);
-    if (user == null) {
-      this.$router.push("/");
-    }
-  },
-  methods: {
-    onSubmit: () => {
-      console.log("submit!");
-
-      //输出data中的form
-      console.log(form);
-      axios.post("/api/getcrouse", form).then((res) => {
-        // 如果res.status为200，说明登录成功,跳转到首页
-        if (res.status === 200) {
-          console.log("成功");
-          //调用seccess方法
-          //   console.log("!!!!!", res.data);
-          //将res.data写入ics文件
-          const blob = new Blob([res.data], {
-            type: "text/calendar;charset=utf-8",
-          });
-          //   function saveAs(obj: any, fileName: string) {
-          //     var a = document.createElement("a");
-          //     a.download = fileName;
-          //     a.href = URL.createObjectURL(obj);
-          //     a.click();
-          //     URL.revokeObjectURL(obj);
-          //   }
-          //   saveAs(blob, form.xnxq01id + "课程表.ics");
-          const aEle = document.createElement("a"); // 创建a标签
-          const href = window.URL.createObjectURL(blob); // 创建下载的链接
-          aEle.href = href;
-          aEle.download = form.xnxq01id + "课程表.ics";
-          document.body.appendChild(aEle);
-          aEle.click();
-          document.body.removeChild(aEle);
-          window.URL.revokeObjectURL(href);
-        } else {
-          console.log("失败");
-        }
-      });
-    },
-    seccess: () => {
-      ElNotification({
-        title: "Success",
-        message: "This is a success message",
-        type: "success",
-      });
-    },
-
-    Update: (xnxqid: string | number) => {
-      console.log("update!");
-      console.log("xnxqid", xnxqid);
-      console.log(form);
-      //将xnxqid赋值给form中的xnxq01id属性
-      form.start_date = user[xnxqid];
-      console.log("user", user[xnxqid]);
-    },
-  },
-  data() {
-    return {
-      //   userInfo: {},
-      size: "default",
-      value: null,
-      options: [
-        {
-          value: "",
-          label: "",
-        },
-      ],
-      //将form对象赋值给data中的form
-      form,
-      user,
-    };
-  },
-};
-</script>
+        </el-form-item>
   
-  <style scoped>
-.container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: auto;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-</style>
-    
+        <el-form-item
+          label="密码"
+          prop="password"
+        >
+          <el-input
+            v-model="ruleForm.password"
+            type="password"
+            autocomplete="off"
+          />
+        </el-form-item>
+  
+        <!-- <el-form-item
+          label="Age"
+          prop="age"
+        >
+          <el-input v-model.number="ruleForm.age" />
+        </el-form-item> -->
+  
+        <el-form-item>
+          <el-button
+            type="primary"
+            @click="submitForm(ruleFormRef)"
+          >登录
+          </el-button>
+          <el-button @click="resetForm(ruleFormRef)">重置</el-button>
+        </el-form-item>
+  
+      </el-form>
+    </div>
+  </template>
+  
+  <script lang="ts" setup>
+  import { UserFilled } from "@element-plus/icons-vue";
+  import { reactive, ref } from "vue";
+  import type { FormInstance } from "element-plus";
+  import { ElNotification } from "element-plus";
+  import "element-plus/theme-chalk/el-notification.css";
+  import axios from "axios";
+  
+  // 使用axios将当前的表单数据发送到后端
+  const Post = (url: string, data: any) => {
+    return axios.post(url, data);
+  };
+  
+  const seccess = () => {
+    ElNotification({
+      title: "Success",
+      message: "This is a success message",
+      type: "success",
+    });
+  };
+  
+  const ruleFormRef = ref<FormInstance>();
+  
+  const checkAge = (rule: any, value: any, callback: any) => {
+    if (!value) {
+      return callback(new Error("Please input the age"));
+    }
+    setTimeout(() => {
+      if (!Number.isInteger(value)) {
+        callback(new Error("Please input digits"));
+      } else {
+        if (value < 18) {
+          callback(new Error("Age must be greater than 18"));
+        } else {
+          callback();
+        }
+      }
+    }, 1000);
+  };
+  
+  const validatePass = (rule: any, value: any, callback: any) => {
+    console.log(ruleFormRef.value);
+    if (value === "") {
+      callback(new Error("请输入学号"));
+    } else {
+      if (ruleForm.password !== "") {
+        if (!ruleFormRef.value) return;
+        ruleFormRef.value.validateField("password", () => null);
+      }
+      callback();
+    }
+  };
+  const validatePass2 = (rule: any, value: any, callback: any) => {
+    if (value === "") {
+      callback(new Error("请输入密码"));
+    }
+    //   else if (value !== ruleForm.pass) {
+    //     callback(new Error("Two inputs don't match!"));
+    //   }
+    else {
+      callback();
+    }
+  };
+  
+  const ruleForm = reactive({
+    school_id: "",
+    password: "",
+  });
+  
+  const rules = reactive({
+    pass: [{ validator: validatePass, trigger: "blur" }],
+    checkPass: [{ validator: validatePass2, trigger: "blur" }],
+    age: [{ validator: checkAge, trigger: "blur" }],
+  });
+  
+  const submitForm = (formEl: FormInstance | undefined) => {
+    if (!formEl) return;
+    formEl.validate((valid) => {
+      if (valid) {
+        console.log("submit!");
+        console.log(ruleForm);
+  
+        axios.post("http://112.74.110.0:5555/login", ruleForm).then((res) => {
+          console.log("!!!!!", res.data);
+          // 如果res.status为200，说明登录成功,跳转到首页
+          if (res.status === 200) {
+            console.log("登录成功");
+            seccess();
+            // 跳转到首页
+            window.location.href = "/getcrouse";
+            //将res.data中的数据存储到sessionStorage中
+            sessionStorage.setItem("user", JSON.stringify(res.data));
+          }
+        });
+      } else {
+        console.log("error submit!");
+        return false;
+      }
+    });
+  };
+  
+  const resetForm = (formEl: FormInstance | undefined) => {
+    if (!formEl) return;
+    formEl.resetFields();
+  };
+  </script>
+  
+  <style lang="scss" scoped>
+  .container {
+    width: 450px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 100px;
+    bottom: 0;
+  }
+  </style>
+  
