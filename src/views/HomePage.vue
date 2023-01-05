@@ -132,7 +132,7 @@ const submitForm = (formEl: FormInstance | undefined) => {
       console.log("submit!");
       console.log(ruleForm);
 
-      axios.post("http://112.74.110.0:5555/login", ruleForm).then((res) => {
+      axios.post("/api/login", ruleForm).then((res) => {
         console.log("!!!!!", res.data);
         // 如果res.status为200，说明登录成功,跳转到首页
         if (res.status === 200) {
