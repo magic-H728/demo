@@ -100,7 +100,7 @@ export default {
 
       //输出data中的form
       console.log(form);
-      axios.post("/api/getcrouse", form).then((res) => {
+      axios.post("https://api.magic-h.top/getcrouse", form).then((res) => {
         // 如果res.status为200，说明登录成功,跳转到首页
         if (res.status === 200) {
           console.log("成功");
