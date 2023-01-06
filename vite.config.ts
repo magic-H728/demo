@@ -18,11 +18,11 @@ export default defineConfig({
     server: {
         // open: true,
         host: '0.0.0.0',
-        port: 3000,
+        port: 80,
         proxy: {
             '/api': {
                 // target: "http://localhost:5555",
-                target:"http://112.74.110.0:5555",
+                target:"https://api.magic-h.top/",
                 changeOrigin: true,
                 secure: false,
                 rewrite (path) {
@@ -30,5 +30,8 @@ export default defineConfig({
                 }
             }
         }
+    },
+    preview: {
+        port: 80,
     }
 })
